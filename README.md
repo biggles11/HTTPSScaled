@@ -2,24 +2,24 @@
 
 ## General
 
-This is a Scaling Group joined HTTPS Server with igw, scaling group, load balancer and firewalling to allow just ssh and https.
+This is a Scaling Group joined HTTPS Server with igw, scaling group, load balancer and firewalling to allow just ssh and https traffic.
 
 This has been created on Mac OSX using Visual Studio Code.
 
-It spins up a simple web page to only allow https (and ssh for ec2 instance connect access) connections to an EC2 instance.
+It spins up a simple web page to allow only https (and ssh for ec2 instance connect access) connections to an EC2 instance.
 
-This sets up a simple security group to only accept 443 HTTPS and 22 ssh traffic.
+This sets up a simple security group to accept only 443 HTTPS and 22 ssh traffic.
 
-It then starts an EC2 Linux instance of t2 micro and installs httpd, php and ssl.
+It then starts an EC2 Linux instance of t2.micro and installs httpd, php and ssl along with configuring a simple web application.
 
 ## Providers
-provider.tf gets the aws module to allow for the other sections to control aws.
+provider.tf specifies the aws module to allow for the other sections within this project to control aws resources.
 
 ## Outputs
-At the end of the run the created AMI ID, Initial Instance ID and Load Balancer name is output. In order to hit the web page you can https to the output of the build script and you will see the application webpage.
+At the end of the build run the AMI ID for the AMI that has been created, Initial Instance ID and Load Balancer name is output to screen. In order to hit the web page you can https to the address output by the build script and you will see the application webpage.
 
 ## Main
-main.tf has all the rest as I have kept this fairly flat. There isn't that much in the solution so it made sense to keep it in one place.
+main.tf has all the rest of the setup required.
 
 ## Variables
 The variables required to be set are:
