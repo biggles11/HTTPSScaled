@@ -2,23 +2,24 @@
 
 ## General
 
-This is a Scaling Group joined HTTPS Server with igw, scaling group, load balancer and firewalling to allow just ssh and https
+This is a Scaling Group joined HTTPS Server with igw, scaling group, load balancer and firewalling to allow just ssh and https.
 
-This has been created on Mac OSX using Visual Studio Code
+This has been created on Mac OSX using Visual Studio Code.
 
-It spins up a simple web page to only allow https (and ssh for ec2 instance connect access) connections to an EC2 instance
+It spins up a simple web page to only allow https (and ssh for ec2 instance connect access) connections to an EC2 instance.
 
-This sets up a simple security group to only accept 443 HTTPS and 22 ssh traffic
-It then starts an EC2 Linux instance of t2 micro and installs httpd, php and ssl
+This sets up a simple security group to only accept 443 HTTPS and 22 ssh traffic.
+
+It then starts an EC2 Linux instance of t2 micro and installs httpd, php and ssl.
 
 ## Providers
-provider.tf gets the aws module to allow for the other sections to control aws
+provider.tf gets the aws module to allow for the other sections to control aws.
 
 ## Outputs
-At the end of the run the created AMI ID, Initial Instance ID and Load Balancer name is output. In order to hit the web page you can https to the output of 
+At the end of the run the created AMI ID, Initial Instance ID and Load Balancer name is output. In order to hit the web page you can https to the output of the build script and you will see the application webpage.
 
 ## Main
-main.tf has all the rest as I have kept this fairly flat. There isn't that much in the solution so it made sense to keep it in one place
+main.tf has all the rest as I have kept this fairly flat. There isn't that much in the solution so it made sense to keep it in one place.
 
 ## Variables
 The variables required to be set are:
@@ -54,24 +55,24 @@ The routing table allows traffic out to the web and associates the subnets that 
 The security group setup allows only port 22 (ssh) and port 443 (https) ingress. All outgoing traffic is allowed.
 
 ### Load Balancer
-The Load Balancer is setup in order to act as the front end of the application. It includes all 3 subnets and is accessible from the web
+The Load Balancer is setup in order to act as the front end of the application. It includes all 3 subnets and is accessible from the web.
 
 ### Load Balancer Target Group
 The Load Balancer Target group tells the load balancer where to forward traffic to and is populated by the scaling group (mentioned below) when instances are started and added to the group. The scaling group can add a target or multiple targets to spread the load across.
 
 ### Load balancer Listener
-The load balancer listener passes all https traffic straight through to the application instances when port 443 is hit
+The load balancer listener passes all https traffic straight through to the application instances when port 443 is hit.
 
 ## Instance setup
 An Instance is started with the ami set in the variables. This AMI will be dependent on region and should be changed accordingly. It will use the security group setup above so it allows https and ssh traffic into the instance. Although this initial instance is started in Availability Zone a it can be started in any zone in the region. This instance should be shutdown once the user is satisfied that the build and AMI is complete and correct. It should not be terminated as it can be used for upgrades while not affecting the core application and then the launch template can be updated to reflect this.
 
-During the instance creation the user_data section creates the http server to accept only https and adds a default webpage to serve as a test
+During the instance creation the user_data section creates the http server to accept only https and adds a default webpage to serve as a test.
 
 ## HTTPD Setup
 The index page of the application is populated during the user_data section of the instance start so that when you hit view the page you are told your IP, ISP etc (Thanks to Jeff Starr on perishable Press for the code for that). It allows for testing of the load balancing section of this solution.
 
 ## AMI Creation
-Once built the AMI is created for scaling instances. This initial instance can be shutdown but should be used for upgrade purposes to allow for updating the AMI offline so as not to affect service
+Once built the AMI is created for scaling instances. This initial instance can be shutdown but should be used for upgrade purposes to allow for updating the AMI offline so as not to affect service.
 
 ## Launch Template
 The launch template uses the AMI created by the step above and allows for consistent, uniform and repeatable rollout of the application service.
@@ -82,7 +83,7 @@ The scaling group is currently set to start 3 instances of the application which
 # Using the build and Application
 Once your development environment is setup to connect to AWS with a user with suitable privileges to create and change resources you should be able to run terraform init and terraform apply in order to build the project. If the IPs that are in the variables do not clash with anything you already have setup then this should run completely.
 
-Once the run has completed you will have 4 instances started (You may have to allow a few minutes for the scaling group to complete the start of the 3 instances within the group)
+Once the run has completed you will have 4 instances started (You may have to allow a few minutes for the scaling group to complete the start of the 3 instances within the group).
 
 The first instance built (Tagged as HTTPSWebServer) can be shutdown but should not be terminated. This instance should be used for AMI updates in order to allow OS and application updates to be applied without impact to the service. Once this instance has been updated and tested the AMI can be updated, at which point the scaling group can update the instances it has without outage, while sharing service across the Target Group.
 
@@ -92,5 +93,4 @@ The output from the build run gives the https web address for the service in the
 If you allow time for the load balancer, scaling group, instances and associated listeners to start and become healthy then you will be able to see that you are served by all of the load balanced targets due to the load balancer.
 
 ## Monitoring
-Monitoring has not been put in place for this project yet. This is for future development
-
+Monitoring has not been put in place for this project yet. This is for future development.
