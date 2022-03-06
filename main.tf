@@ -1,24 +1,24 @@
 resource "aws_vpc" "HTTP-VPC" {
-   cidr_block = "10.10.0.0/16"
+   cidr_block = "${var.vpc_net}/16"
 }
 
 resource "aws_subnet" "defaulta" {
   vpc_id                  = "${aws_vpc.HTTP-VPC.id}"
-  cidr_block              = "10.10.1.0/24"
+  cidr_block              = "${var.subnet1}/24"
   map_public_ip_on_launch = true
   availability_zone = "${var.aws_region}a"
 }
 
 resource "aws_subnet" "defaultb" {
   vpc_id                  = "${aws_vpc.HTTP-VPC.id}"
-  cidr_block              = "10.10.2.0/24"
+  cidr_block              = "${var.subnet2}/24"
   map_public_ip_on_launch = true
   availability_zone = "${var.aws_region}b"
 }
 
 resource "aws_subnet" "defaultc" {
   vpc_id                  = "${aws_vpc.HTTP-VPC.id}"
-  cidr_block              = "10.10.3.0/24"
+  cidr_block              = "${var.subnet3}/24"
   map_public_ip_on_launch = true
   availability_zone = "${var.aws_region}c"
 }
@@ -103,7 +103,7 @@ resource "aws_lb_listener" "HTTPSServer" {
 }
 
 resource "aws_instance" "Web-JT" {
-  ami           = "ami-060c4f2d72966500a"
+  ami           = "${var.build_ami_id}"
   instance_type = "t2.micro"
   vpc_security_group_ids = ["${aws_security_group.HTTPS-Web-Server.id}"]
   subnet_id = aws_subnet.defaulta.id

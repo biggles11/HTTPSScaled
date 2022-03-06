@@ -1,2 +1,6 @@
 aws_region="eu-west-2"
-test_user="jt-test"
+vpc_net="10.10.0.0"
+subnet1="10.10.1.0"
+subnet2="10.10.2.0"
+subnet3="10.10.3.0"
+build_ami_id="ami-060c4f2d72966500a"
